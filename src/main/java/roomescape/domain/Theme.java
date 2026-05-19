@@ -1,6 +1,5 @@
 package roomescape.domain;
 
-import java.net.URI;
 import java.net.URL;
 import lombok.RequiredArgsConstructor;
 import roomescape.domain.exception.DomainException;
@@ -45,6 +44,10 @@ public class Theme {
 
     public String description() {
         return description;
+    }
+
+    public boolean isDeleted() {
+        return this.status == ThemeStatus.DELETED;
     }
 
     public ThemeStatus status() {

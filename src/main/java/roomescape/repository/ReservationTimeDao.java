@@ -90,6 +90,12 @@ public class ReservationTimeDao {
     }
 
     public Optional<ReservationTime> findByTimeId(long timeId) {
+        String sql = "SELECT id, start_at, status FROM reservation_time WHERE id = ?";
+        return jdbcTemplate.query(sql, rowMapper, timeId)
+                .stream().findFirst();
+    }
+
+    public Optional<ReservationTime> findAvailableByTimeId(long timeId) {
         String sql = "SELECT id, start_at, status FROM reservation_time WHERE id = ? AND status = ?";
         return jdbcTemplate.query(sql, rowMapper, timeId, TimeStatus.AVAILABLE.name())
                 .stream().findFirst();

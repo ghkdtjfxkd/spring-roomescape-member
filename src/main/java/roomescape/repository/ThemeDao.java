@@ -29,6 +29,12 @@ public class ThemeDao {
     );
 
     public Optional<Theme> findByThemeId(long themeId) {
+        String sql = "SELECT id, name, thumbnail_url, description, status FROM theme WHERE id = ?";
+        return jdbcTemplate.query(sql, rowMapper, themeId)
+                .stream().findFirst();
+    }
+
+    public Optional<Theme> findAvailableByThemeId(long themeId) {
         String sql = "SELECT id, name, thumbnail_url, description, status FROM theme WHERE id = ? AND status = ?";
         return jdbcTemplate.query(sql, rowMapper, themeId, ThemeStatus.AVAILABLE.name())
                 .stream().findFirst();

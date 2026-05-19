@@ -72,9 +72,9 @@ class ReservationTimeDaoTest {
     }
 
     @Test
-    @DisplayName("AVAILABLE 상태의 시간 ID로 조회하면 값이 반환된다.")
+    @DisplayName("시간 ID로 조회하면 status 무관하게 값이 반환된다.")
     void findByTimeIdTest() {
-        jdbcTemplate.update("INSERT INTO reservation_time VALUES (1, '09:00', 'AVAILABLE')");
+        jdbcTemplate.update("INSERT INTO reservation_time VALUES (1, '09:00', 'DELETED')");
 
         Optional<ReservationTime> result = reservationTimeDao.findByTimeId(1L);
 
@@ -91,11 +91,22 @@ class ReservationTimeDaoTest {
     }
 
     @Test
-    @DisplayName("DELETED 상태의 시간 ID로 조회하면 빈 Optional이 반환된다.")
-    void findByTimeIdDeletedTest() {
+    @DisplayName("AVAILABLE 상태의 시간 ID로 조회하면 값이 반환된다.")
+    void findAvailableByTimeIdTest() {
+        jdbcTemplate.update("INSERT INTO reservation_time VALUES (1, '09:00', 'AVAILABLE')");
+
+        Optional<ReservationTime> result = reservationTimeDao.findAvailableByTimeId(1L);
+
+        assertThat(result.isPresent()).isTrue();
+        assertThat(result.get().id()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("DELETED 상태의 시간 ID로 findAvailableByTimeId 조회하면 빈 Optional이 반환된다.")
+    void findAvailableByTimeIdDeletedTest() {
         jdbcTemplate.update("INSERT INTO reservation_time VALUES (1, '09:00', 'DELETED')");
 
-        Optional<ReservationTime> result = reservationTimeDao.findByTimeId(1L);
+        Optional<ReservationTime> result = reservationTimeDao.findAvailableByTimeId(1L);
 
         assertThat(result.isEmpty()).isTrue();
     }

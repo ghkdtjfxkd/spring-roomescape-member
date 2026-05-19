@@ -24,4 +24,20 @@ class ThemeTest {
                 .isInstanceOf(DomainException.class)
                 .hasMessage("유효한 URL 형식이 아닙니다.");
     }
+
+    @Test
+    @DisplayName("DELETED 상태의 테마는 isDeleted()가 true를 반환한다.")
+    void isDeletedReturnsTrueWhenDeleted() {
+        Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.DELETED);
+
+        assertThat(theme.isDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("AVAILABLE 상태의 테마는 isDeleted()가 false를 반환한다.")
+    void isDeletedReturnsFalseWhenAvailable() {
+        Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
+
+        assertThat(theme.isDeleted()).isFalse();
+    }
 }

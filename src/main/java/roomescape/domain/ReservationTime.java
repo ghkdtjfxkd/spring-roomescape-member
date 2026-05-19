@@ -28,6 +28,10 @@ public class ReservationTime {
         return startAt;
     }
 
+    public boolean isDeleted() {
+        return this.status == TimeStatus.DELETED;
+    }
+
     public boolean isPast(LocalDate date, LocalDateTime requestDateTime) {
         return requestDateTime.isAfter(LocalDateTime.of(date, this.startAt));
     }

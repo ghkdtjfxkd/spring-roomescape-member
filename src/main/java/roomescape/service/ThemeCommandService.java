@@ -6,7 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import roomescape.domain.Theme;
 import roomescape.dto.response.ThemeResponse;
 import roomescape.exception.ErrorMessage;
+import roomescape.exception.custom.BadRequestException;
 import roomescape.exception.custom.ConflictException;
+import roomescape.exception.custom.NotFoundException;
 import roomescape.repository.ReservationDao;
 import roomescape.repository.ThemeDao;
 
@@ -25,9 +27,17 @@ public class ThemeCommandService {
     }
 
     public void delete(long id) {
+        Theme theme = themeDao.findByThemeId(id)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.THEME_NOT_FOUND));
+
+        if (theme.isDeleted()) {
+            throw new BadRequestException(ErrorMessage.THEME_ALREADY_DELETED);
+        }
+
         if (reservationDao.existsByThemeId(id)) {
             throw new ConflictException(ErrorMessage.THEME_IN_USE);
         }
+
         themeDao.delete(id);
     }
 

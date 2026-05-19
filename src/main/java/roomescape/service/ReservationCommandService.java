@@ -56,12 +56,12 @@ public class ReservationCommandService {
     }
 
     private ReservationTime getReservationTime(long timeId) {
-        return reservationTimeDao.findByTimeId(timeId)
+        return reservationTimeDao.findAvailableByTimeId(timeId)
                 .orElseThrow(() -> new BadRequestException(ErrorMessage.TIME_NOT_FOUND));
     }
 
     private Theme getTheme(long themeId) {
-        return themeDao.findByThemeId(themeId)
+        return themeDao.findAvailableByThemeId(themeId)
                 .orElseThrow(() -> new BadRequestException(ErrorMessage.THEME_NOT_FOUND));
     }
 

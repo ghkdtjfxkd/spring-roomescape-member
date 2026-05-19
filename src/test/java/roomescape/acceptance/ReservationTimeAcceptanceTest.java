@@ -51,6 +51,18 @@ public class ReservationTimeAcceptanceTest extends AcceptanceTestSupport{
     }
 
     @Test
+    @DisplayName("이미 삭제된 시간 삭제 요청 시 400 상태코드를 반환한다.")
+    void deleteAlreadyDeletedTimeRequestTest() {
+        jdbcTemplate.update("INSERT INTO reservation_time (id, start_at, status) VALUES (1, '10:00', 'DELETED')");
+
+        RestAssured.given().log().all()
+                .when().delete("/admin/times/1")
+                .then().log().all()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(ErrorMessage.TIME_ALREADY_DELETED.getMessage()));
+    }
+
+    @Test
     @DisplayName("존재하지 않는 시간 삭제 요청 시 404 상태코드를 반환한다.")
     void deleteNotExistTimeRequestTest() {
         RestAssured.given().log().all()
