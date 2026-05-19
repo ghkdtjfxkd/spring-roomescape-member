@@ -40,7 +40,8 @@ class ReservationTimeDaoTest {
 
         return ReservationTime.of(
                 rs.getLong("id"),
-                rs.getObject("start_at", LocalTime.class)
+                rs.getObject("start_at", LocalTime.class),
+                TimeStatus.valueOf(rs.getString("status"))
         );
     };
 

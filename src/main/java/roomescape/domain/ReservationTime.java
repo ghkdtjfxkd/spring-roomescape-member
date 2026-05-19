@@ -16,12 +16,8 @@ public class ReservationTime {
         return new ReservationTime(null, startAt, TimeStatus.DRAFT);
     }
 
-    public static ReservationTime of(long id, LocalTime startAt) {
-        return new ReservationTime(id, startAt, TimeStatus.AVAILABLE);
-    }
-
-    public ReservationTime deleted() {
-        return new ReservationTime(this.id, this.startAt, TimeStatus.DELETED);
+    public static ReservationTime of(long id, LocalTime startAt, TimeStatus status) {
+        return new ReservationTime(id, startAt, status);
     }
 
     public long id() {

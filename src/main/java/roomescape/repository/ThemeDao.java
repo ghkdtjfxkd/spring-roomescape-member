@@ -20,21 +20,13 @@ import roomescape.exception.custom.NotFoundException;
 public class ThemeDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Theme> rowMapper = (rs, rowNum) -> {
-
-        Theme theme = Theme.of(
-                rs.getLong("id"),
-                rs.getString("name"),
-                rs.getString("thumbnail_url"),
-                rs.getString("description")
-        );
-
-        if (ThemeStatus.DELETED.name().equals(rs.getString("status"))) {
-            return theme.deleted();
-        }
-
-        return theme;
-    };
+    private final RowMapper<Theme> rowMapper = (rs, rowNum) -> Theme.of(
+            rs.getLong("id"),
+            rs.getString("name"),
+            rs.getString("thumbnail_url"),
+            rs.getString("description"),
+            ThemeStatus.valueOf(rs.getString("status"))
+    );
 
     public Optional<Theme> findByThemeId(long themeId) {
         String sql = "SELECT id, name, thumbnail_url, description, status FROM theme WHERE id = ? AND status = ?";
@@ -59,7 +51,8 @@ public class ThemeDao {
                 themeId.longValue(),
                 theme.name(),
                 theme.thumbnailUrl(),
-                theme.description()
+                theme.description(),
+                ThemeStatus.AVAILABLE
         );
     }
 

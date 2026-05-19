@@ -27,20 +27,13 @@ class ThemeDaoTest {
         jdbcTemplate.update("DELETE FROM theme");
     }
 
-    private final RowMapper<Theme> rowMapper = (rs, rowNum) -> {
-        Theme theme = Theme.of(
-                rs.getLong("id"),
-                rs.getString("name"),
-                rs.getString("thumbnail_url"),
-                rs.getString("description")
-        );
-
-        if (rs.getString("status").equals(ThemeStatus.DELETED.toString())) {
-            return theme.deleted();
-        }
-
-        return theme;
-    };
+    private final RowMapper<Theme> rowMapper = (rs, rowNum) -> Theme.of(
+            rs.getLong("id"),
+            rs.getString("name"),
+            rs.getString("thumbnail_url"),
+            rs.getString("description"),
+            ThemeStatus.valueOf(rs.getString("status"))
+    );
 
     @Test
     @DisplayName("테마 생성 테스트")

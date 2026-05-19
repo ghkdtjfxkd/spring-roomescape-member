@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
+import roomescape.domain.ThemeStatus;
+import roomescape.domain.TimeStatus;
 import roomescape.exception.ErrorMessage;
 import roomescape.exception.custom.NotFoundException;
 
@@ -27,12 +29,14 @@ public class ReservationDao {
                 rs.getLong("theme_id"),
                 rs.getString("theme_name"),
                 rs.getString("thumbnail_url"),
-                rs.getString("theme_description")
+                rs.getString("theme_description"),
+                ThemeStatus.AVAILABLE
         );
 
         ReservationTime reservationTime = ReservationTime.of(
                 rs.getLong("time_id"),
-                rs.getObject("time_value", LocalTime.class)
+                rs.getObject("time_value", LocalTime.class),
+                TimeStatus.AVAILABLE
         );
 
         return Reservation.of(

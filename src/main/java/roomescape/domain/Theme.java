@@ -27,12 +27,8 @@ public class Theme {
         }
     }
 
-    public static Theme of(long id, String name, String thumbnailUrl, String description) {
-        return new Theme(id, name, thumbnailUrl, description, ThemeStatus.AVAILABLE);
-    }
-
-    public Theme deleted() {
-        return new Theme(this.id, this.name, this.thumbnailUrl ,this.description, ThemeStatus.DELETED);
+    public static Theme of(long id, String name, String thumbnailUrl, String description, ThemeStatus status) {
+        return new Theme(id, name, thumbnailUrl, description, status);
     }
 
     public long id() {

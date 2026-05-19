@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
+import roomescape.domain.ThemeStatus;
+import roomescape.domain.TimeStatus;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ReservationDaoTest {
@@ -37,8 +39,8 @@ class ReservationDaoTest {
     @Test
     @DisplayName("예약 저장 테스트")
     void saveReservation() {
-        ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0));
-        Theme theme = Theme.of(1L, "공포의 저택", "url", "설명");
+        ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
+        Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
         Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1), time, theme);
         Reservation saved = reservationDao.save(reservation);
 
@@ -51,8 +53,8 @@ class ReservationDaoTest {
     @Test
     @DisplayName("예약 삭제 시 DB에서 행이 제거된다")
     void deleteReservation() {
-        ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0));
-        Theme theme = Theme.of(1L, "공포의 저택", "url", "설명");
+        ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
+        Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
         Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1), time, theme);
         Reservation saved = reservationDao.save(reservation);
 
@@ -65,8 +67,8 @@ class ReservationDaoTest {
     @Test
     @DisplayName("동일 날짜·시간·테마 예약이 존재하면 true를 반환한다")
     void existsReturnsTrueWhenDuplicate() {
-        ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0));
-        Theme theme = Theme.of(1L, "공포의 저택", "url", "설명");
+        ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
+        Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
         Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1), time, theme);
         reservationDao.save(reservation);
 
