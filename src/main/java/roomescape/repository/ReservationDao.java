@@ -44,12 +44,12 @@ public class ReservationDao {
         );
     };
 
-    public Reservation save(Reservation reservation, long timeId, long themeId) {
+    public Reservation save(Reservation reservation) {
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", reservation.username())
                 .addValue("date", reservation.reservationDate())
-                .addValue("time_id", timeId)
-                .addValue("theme_id", themeId);
+                .addValue("time_id", reservation.reservationTime().id())
+                .addValue("theme_id", reservation.reservationTheme().id());
 
         SimpleJdbcInsert reservationInsertExecutor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("reservation")

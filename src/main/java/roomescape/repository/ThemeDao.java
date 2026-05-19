@@ -2,6 +2,7 @@ package roomescape.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -34,6 +35,12 @@ public class ThemeDao {
 
         return theme;
     };
+
+    public Optional<Theme> findByThemeId(long themeId) {
+        String sql = "SELECT id, name, thumbnail_url, description, status FROM theme WHERE id = ? AND status = ?";
+        return jdbcTemplate.query(sql, rowMapper, themeId, ThemeStatus.AVAILABLE.name())
+                .stream().findFirst();
+    }
 
     public Theme save(Theme theme) {
         SqlParameterSource params = new MapSqlParameterSource()
