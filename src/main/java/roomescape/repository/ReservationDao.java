@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 import roomescape.domain.Reservation;
 import roomescape.domain.ReservationTime;
 import roomescape.domain.Theme;
+import roomescape.domain.ThemeStatus;
+import roomescape.domain.TimeStatus;
 import roomescape.exception.ErrorMessage;
 import roomescape.exception.custom.NotFoundException;
 
@@ -27,12 +29,14 @@ public class ReservationDao {
                 rs.getLong("theme_id"),
                 rs.getString("theme_name"),
                 rs.getString("thumbnail_url"),
-                rs.getString("theme_description")
+                rs.getString("theme_description"),
+                ThemeStatus.AVAILABLE
         );
 
         ReservationTime reservationTime = ReservationTime.of(
                 rs.getLong("time_id"),
-                rs.getObject("time_value", LocalTime.class)
+                rs.getObject("time_value", LocalTime.class),
+                TimeStatus.AVAILABLE
         );
 
         return Reservation.of(
@@ -44,12 +48,12 @@ public class ReservationDao {
         );
     };
 
-    public Reservation save(Reservation reservation, long timeId, long themeId) {
+    public Reservation save(Reservation reservation) {
         SqlParameterSource params = new MapSqlParameterSource()
                 .addValue("name", reservation.username())
                 .addValue("date", reservation.reservationDate())
-                .addValue("time_id", timeId)
-                .addValue("theme_id", themeId);
+                .addValue("time_id", reservation.reservationTime().id())
+                .addValue("theme_id", reservation.reservationTheme().id());
 
         SimpleJdbcInsert reservationInsertExecutor = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("reservation")

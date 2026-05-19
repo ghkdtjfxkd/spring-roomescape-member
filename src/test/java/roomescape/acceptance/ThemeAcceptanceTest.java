@@ -48,6 +48,18 @@ public class ThemeAcceptanceTest extends AcceptanceTestSupport{
     }
 
     @Test
+    @DisplayName("이미 삭제된 테마 삭제 요청 시 400 상태코드를 반환한다.")
+    void deleteAlreadyDeletedThemeRequestTest() {
+        jdbcTemplate.update("INSERT INTO theme (id, name, thumbnail_url, description, status) VALUES (1, '공포의 저택', 'http://localhost/thumbnail', '공포_설명', 'DELETED')");
+
+        RestAssured.given().log().all()
+                .when().delete("/admin/themes/1")
+                .then().log().all()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .body("message", is(ErrorMessage.THEME_ALREADY_DELETED.getMessage()));
+    }
+
+    @Test
     @DisplayName("예약이 존재하는 테마 삭제 요청 시 409 상태코드를 반환한다.")
     void deleteThemeInUseRequestTest() {
         jdbcTemplate.update("INSERT INTO reservation_time (id, start_at, status) VALUES (1, '10:00', 'AVAILABLE')");

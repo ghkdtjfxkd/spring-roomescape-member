@@ -12,8 +12,8 @@ public class Reservation {
     private final ReservationTime reservationTime;
     private final Theme reservationTheme;
 
-    public static Reservation pending(String username, LocalDate date) {
-        return new Reservation(null, username, date, null, null);
+    public static Reservation pending(String username, LocalDate date, ReservationTime time, Theme theme) {
+        return new Reservation(null, username, date, time, theme);
     }
 
     public static Reservation of(long id, String username, LocalDate date, ReservationTime time, Theme theme) {

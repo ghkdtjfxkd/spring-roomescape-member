@@ -2,6 +2,7 @@ package roomescape.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -19,21 +20,25 @@ import roomescape.exception.custom.NotFoundException;
 public class ThemeDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Theme> rowMapper = (rs, rowNum) -> {
+    private final RowMapper<Theme> rowMapper = (rs, rowNum) -> Theme.of(
+            rs.getLong("id"),
+            rs.getString("name"),
+            rs.getString("thumbnail_url"),
+            rs.getString("description"),
+            ThemeStatus.valueOf(rs.getString("status"))
+    );
 
-        Theme theme = Theme.of(
-                rs.getLong("id"),
-                rs.getString("name"),
-                rs.getString("thumbnail_url"),
-                rs.getString("description")
-        );
+    public Optional<Theme> findByThemeId(long themeId) {
+        String sql = "SELECT id, name, thumbnail_url, description, status FROM theme WHERE id = ?";
+        return jdbcTemplate.query(sql, rowMapper, themeId)
+                .stream().findFirst();
+    }
 
-        if (ThemeStatus.DELETED.name().equals(rs.getString("status"))) {
-            return theme.deleted();
-        }
-
-        return theme;
-    };
+    public Optional<Theme> findAvailableByThemeId(long themeId) {
+        String sql = "SELECT id, name, thumbnail_url, description, status FROM theme WHERE id = ? AND status = ?";
+        return jdbcTemplate.query(sql, rowMapper, themeId, ThemeStatus.AVAILABLE.name())
+                .stream().findFirst();
+    }
 
     public Theme save(Theme theme) {
         SqlParameterSource params = new MapSqlParameterSource()
@@ -52,7 +57,8 @@ public class ThemeDao {
                 themeId.longValue(),
                 theme.name(),
                 theme.thumbnailUrl(),
-                theme.description()
+                theme.description(),
+                ThemeStatus.AVAILABLE
         );
     }
 

@@ -21,18 +21,11 @@ import roomescape.exception.custom.NotFoundException;
 public class ReservationTimeDao {
 
     private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<ReservationTime> rowMapper = (rs, rowNum) -> {
-        ReservationTime reservationTime = ReservationTime.of(
-                rs.getLong("id"),
-                rs.getObject("start_at", LocalTime.class)
-        );
-
-        if (TimeStatus.DELETED.name().equals(rs.getString("status"))) {
-            return reservationTime.deleted();
-        }
-
-        return reservationTime;
-    };
+    private final RowMapper<ReservationTime> rowMapper = (rs, rowNum) -> ReservationTime.of(
+            rs.getLong("id"),
+            rs.getObject("start_at", LocalTime.class),
+            TimeStatus.valueOf(rs.getString("status"))
+    );
 
     public ReservationTime save(ReservationTime reservationTime) {
         SqlParameterSource params = new MapSqlParameterSource()
@@ -47,7 +40,8 @@ public class ReservationTimeDao {
 
         return ReservationTime.of(
                 newId.longValue(),
-                reservationTime.startAt()
+                reservationTime.startAt(),
+                TimeStatus.AVAILABLE
         );
     }
 
@@ -96,6 +90,12 @@ public class ReservationTimeDao {
     }
 
     public Optional<ReservationTime> findByTimeId(long timeId) {
+        String sql = "SELECT id, start_at, status FROM reservation_time WHERE id = ?";
+        return jdbcTemplate.query(sql, rowMapper, timeId)
+                .stream().findFirst();
+    }
+
+    public Optional<ReservationTime> findAvailableByTimeId(long timeId) {
         String sql = "SELECT id, start_at, status FROM reservation_time WHERE id = ? AND status = ?";
         return jdbcTemplate.query(sql, rowMapper, timeId, TimeStatus.AVAILABLE.name())
                 .stream().findFirst();

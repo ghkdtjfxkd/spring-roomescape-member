@@ -5,6 +5,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import roomescape.domain.exception.DomainException;
 import roomescape.dto.response.ErrorResponse;
 import roomescape.exception.custom.RoomescapeException;
 
@@ -12,6 +13,12 @@ import roomescape.exception.custom.RoomescapeException;
 @Order
 @Slf4j
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<ErrorResponse> handleDomainException(DomainException exception) {
+        log.error(exception.getMessage());
+        return ResponseEntity.badRequest().body(new ErrorResponse(exception.getMessage()));
+    }
 
     @ExceptionHandler(RoomescapeException.class)
     public ResponseEntity<ErrorResponse> handleRoomescapeException(RoomescapeException exception) {

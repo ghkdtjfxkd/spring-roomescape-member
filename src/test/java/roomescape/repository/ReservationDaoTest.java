@@ -3,6 +3,7 @@ package roomescape.repository;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import roomescape.domain.Reservation;
+import roomescape.domain.ReservationTime;
+import roomescape.domain.Theme;
+import roomescape.domain.ThemeStatus;
+import roomescape.domain.TimeStatus;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class ReservationDaoTest {
@@ -34,8 +39,10 @@ class ReservationDaoTest {
     @Test
     @DisplayName("예약 저장 테스트")
     void saveReservation() {
-        Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1));
-        Reservation saved = reservationDao.save(reservation, 1L, 1L);
+        ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
+        Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
+        Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1), time, theme);
+        Reservation saved = reservationDao.save(reservation);
 
         assertThat(saved.username()).isEqualTo("user_a");
         assertThat(saved.reservationDate()).isEqualTo(LocalDate.of(2026, 5, 1));
@@ -46,8 +53,10 @@ class ReservationDaoTest {
     @Test
     @DisplayName("예약 삭제 시 DB에서 행이 제거된다")
     void deleteReservation() {
-        Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1));
-        Reservation saved = reservationDao.save(reservation, 1L, 1L);
+        ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
+        Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
+        Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1), time, theme);
+        Reservation saved = reservationDao.save(reservation);
 
         reservationDao.delete(saved.id());
 
@@ -58,8 +67,10 @@ class ReservationDaoTest {
     @Test
     @DisplayName("동일 날짜·시간·테마 예약이 존재하면 true를 반환한다")
     void existsReturnsTrueWhenDuplicate() {
-        Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1));
-        reservationDao.save(reservation, 1L, 1L);
+        ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
+        Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
+        Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1), time, theme);
+        reservationDao.save(reservation);
 
         boolean exists = reservationDao.existsByDateAndTimeIdAndThemeId(LocalDate.of(2026, 5, 1), 1L, 1L);
         assertThat(exists).isTrue();

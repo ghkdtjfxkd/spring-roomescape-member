@@ -27,25 +27,18 @@ class ThemeDaoTest {
         jdbcTemplate.update("DELETE FROM theme");
     }
 
-    private final RowMapper<Theme> rowMapper = (rs, rowNum) -> {
-        Theme theme = Theme.of(
-                rs.getLong("id"),
-                rs.getString("name"),
-                rs.getString("thumbnail_url"),
-                rs.getString("description")
-        );
-
-        if (rs.getString("status").equals(ThemeStatus.DELETED.toString())) {
-            return theme.deleted();
-        }
-
-        return theme;
-    };
+    private final RowMapper<Theme> rowMapper = (rs, rowNum) -> Theme.of(
+            rs.getLong("id"),
+            rs.getString("name"),
+            rs.getString("thumbnail_url"),
+            rs.getString("description"),
+            ThemeStatus.valueOf(rs.getString("status"))
+    );
 
     @Test
     @DisplayName("테마 생성 테스트")
     void CreateReservationTest() {
-        Theme theme = Theme.pending("새 테마", "test.url", "테스트용 테마");
+        Theme theme = Theme.pending("새 테마", "http://localhost/thumbnail", "테스트용 테마");
         Theme saved = themeDao.save(theme);
 
         Theme themeFromQuery = jdbcTemplate.queryForObject("SELECT * FROM theme WHERE id = ?", rowMapper, saved.id());
@@ -60,7 +53,7 @@ class ThemeDaoTest {
     @Test
     @DisplayName("테마 삭제 테스트")
     void DeleteReservationTest() {
-        Theme theme = Theme.pending("새 테마", "test.url", "테스트용 테마");
+        Theme theme = Theme.pending("새 테마", "http://localhost/thumbnail", "테스트용 테마");
         Theme saved = themeDao.save(theme);
 
         themeDao.delete(saved.id());
