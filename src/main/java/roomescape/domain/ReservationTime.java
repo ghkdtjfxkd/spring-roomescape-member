@@ -1,5 +1,7 @@
 package roomescape.domain;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +30,10 @@ public class ReservationTime {
 
     public LocalTime startAt() {
         return startAt;
+    }
+
+    public boolean isPast(LocalDate date, LocalDateTime requestDateTime) {
+        return requestDateTime.isAfter(LocalDateTime.of(date, this.startAt));
     }
 
     public TimeStatus status() {

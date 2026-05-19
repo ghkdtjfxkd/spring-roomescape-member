@@ -57,7 +57,7 @@ public class ReservationCommandService {
     }
 
     private void validatePastDateTime(LocalDateTime requestDateTime, LocalDate date, ReservationTime reservationTime) {
-        if (requestDateTime.isAfter(LocalDateTime.of(date, reservationTime.startAt()))) {
+        if (reservationTime.isPast(date, requestDateTime)) {
             throw new BadRequestException(ErrorMessage.CANNOT_SELECT_PAST_DATETIME);
         }
     }
