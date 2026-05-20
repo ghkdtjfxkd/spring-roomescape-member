@@ -2,16 +2,18 @@ package roomescape.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import roomescape.exception.ErrorMessage;
 import roomescape.exception.custom.ConflictException;
+import roomescape.support.DatabaseCleanupExtension;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ExtendWith(DatabaseCleanupExtension.class)
 class ThemeCommandServiceTest {
 
     @Autowired
@@ -19,14 +21,6 @@ class ThemeCommandServiceTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @BeforeEach
-    void setUp() {
-        jdbcTemplate.update("DELETE FROM reservation_history");
-        jdbcTemplate.update("DELETE FROM reservation");
-        jdbcTemplate.update("DELETE FROM reservation_time");
-        jdbcTemplate.update("DELETE FROM theme");
-    }
 
     @Test
     @DisplayName("이미 존재하는 테마명으로 등록 시 예외가 발생한다.")

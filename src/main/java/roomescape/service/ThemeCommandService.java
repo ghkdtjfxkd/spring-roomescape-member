@@ -28,7 +28,7 @@ public class ThemeCommandService {
 
     public void delete(long id) {
         Theme theme = themeDao.findByThemeId(id)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.THEME_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.THEME_NOT_FOUND.format(id)));
 
         if (theme.isDeleted()) {
             throw new BadRequestException(ErrorMessage.THEME_ALREADY_DELETED);

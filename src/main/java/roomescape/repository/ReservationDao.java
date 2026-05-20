@@ -106,14 +106,14 @@ public class ReservationDao {
         try {
             return jdbcTemplate.queryForObject(sql, rowMapper, reservationId);
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException(ErrorMessage.RESERVATION_NOT_FOUND);
+            throw new NotFoundException(ErrorMessage.RESERVATION_NOT_FOUND.format(reservationId));
         }
     }
 
-    public Reservation update(long reservationId, LocalDate date, long timeId) {
+    public Reservation update(Reservation reservation) {
         String sql = "UPDATE reservation SET date = ?, time_id = ? WHERE id = ?";
-        jdbcTemplate.update(sql, date, timeId, reservationId);
-        return findById(reservationId);
+        jdbcTemplate.update(sql, reservation.reservationDate(), reservation.reservationTime().id(), reservation.id());
+        return findById(reservation.id());
     }
 
     public void delete(long reservationId) {
@@ -121,7 +121,7 @@ public class ReservationDao {
         int affected = jdbcTemplate.update(sql, reservationId);
 
         if (affected == 0) {
-            throw new NotFoundException(ErrorMessage.RESERVATION_NOT_FOUND);
+            throw new NotFoundException(ErrorMessage.RESERVATION_NOT_FOUND.format(reservationId));
         }
     }
 

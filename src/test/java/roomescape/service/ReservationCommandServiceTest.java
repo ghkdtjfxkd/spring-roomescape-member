@@ -6,17 +6,19 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import roomescape.domain.exception.DomainException;
 import roomescape.exception.ErrorMessage;
-import roomescape.exception.custom.BadRequestException;
 import roomescape.exception.custom.ConflictException;
+import roomescape.support.DatabaseCleanupExtension;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ExtendWith(DatabaseCleanupExtension.class)
 class ReservationCommandServiceTest {
 
     @Autowired
@@ -24,14 +26,6 @@ class ReservationCommandServiceTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @BeforeEach
-    void setUp() {
-        jdbcTemplate.update("DELETE FROM reservation_history");
-        jdbcTemplate.update("DELETE FROM reservation");
-        jdbcTemplate.update("DELETE FROM reservation_time");
-        jdbcTemplate.update("DELETE FROM theme");
-    }
 
     @Test
     @DisplayName("지나간 날짜, 시간에 대한 예약 시 예외가 발생한다.")
@@ -45,7 +39,7 @@ class ReservationCommandServiceTest {
         LocalDateTime requestDateTime = LocalDateTime.of(date, LocalTime.MAX);
 
         assertThatThrownBy(() -> reservationCommandService.create("user_a", date, timeId, themeId, requestDateTime))
-                .isExactlyInstanceOf(BadRequestException.class)
+                .isExactlyInstanceOf(DomainException.class)
                 .hasMessage(ErrorMessage.CANNOT_SELECT_PAST_DATETIME.getMessage());
     }
 

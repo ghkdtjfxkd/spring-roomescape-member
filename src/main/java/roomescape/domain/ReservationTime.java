@@ -1,7 +1,5 @@
 package roomescape.domain;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 
@@ -30,10 +28,6 @@ public class ReservationTime {
 
     public boolean isDeleted() {
         return this.status == TimeStatus.DELETED;
-    }
-
-    public boolean isPast(LocalDate date, LocalDateTime requestDateTime) {
-        return requestDateTime.isAfter(LocalDateTime.of(date, this.startAt));
     }
 
     public TimeStatus status() {
