@@ -2,17 +2,19 @@ package roomescape.repository;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import roomescape.domain.Theme;
 import roomescape.domain.ThemeStatus;
+import roomescape.support.DatabaseCleanupExtension;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ExtendWith(DatabaseCleanupExtension.class)
 class ThemeDaoTest {
 
     @Autowired
@@ -20,12 +22,6 @@ class ThemeDaoTest {
 
     @Autowired
     private ThemeDao themeDao;
-
-    @BeforeEach
-    void setUp() {
-        jdbcTemplate.update("DELETE FROM reservation");
-        jdbcTemplate.update("DELETE FROM theme");
-    }
 
     private final RowMapper<Theme> rowMapper = (rs, rowNum) -> Theme.of(
             rs.getLong("id"),

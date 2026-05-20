@@ -4,17 +4,19 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.time.LocalTime;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import roomescape.domain.ReservationTime;
 import roomescape.domain.TimeStatus;
+import roomescape.support.DatabaseCleanupExtension;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ExtendWith(DatabaseCleanupExtension.class)
 class ReservationTimeDaoTest {
 
     @Autowired
@@ -22,12 +24,6 @@ class ReservationTimeDaoTest {
 
     @Autowired
     private ReservationTimeDao reservationTimeDao;
-
-    @BeforeEach
-    void setUp() {
-        jdbcTemplate.update("DELETE FROM reservation");
-        jdbcTemplate.update("DELETE FROM reservation_time");
-    }
 
     private final RowMapper<ReservationTime> rowMapper = (rs, rowNum) -> {
         if (rs.getString("status").equals(TimeStatus.DELETED.toString())) {
