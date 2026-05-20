@@ -59,12 +59,12 @@ public class ReservationCommandService {
 
     private ReservationTime getReservationTime(long timeId) {
         return reservationTimeDao.findAvailableByTimeId(timeId)
-                .orElseThrow(() -> new BadRequestException(ErrorMessage.TIME_NOT_FOUND));
+                .orElseThrow(() -> new BadRequestException(ErrorMessage.TIME_NOT_FOUND.format(timeId)));
     }
 
     private Theme getTheme(long themeId) {
         return themeDao.findAvailableByThemeId(themeId)
-                .orElseThrow(() -> new BadRequestException(ErrorMessage.THEME_NOT_FOUND));
+                .orElseThrow(() -> new BadRequestException(ErrorMessage.THEME_NOT_FOUND.format(themeId)));
     }
 
     private void validateNoDuplicateReservation(LocalDate date, long timeId, long themeId) {

@@ -44,7 +44,7 @@ public class ThemeAcceptanceTest extends AcceptanceTestSupport{
                 .when().delete("/admin/themes/999")
                 .then().log().all()
                 .statusCode(HttpStatus.NOT_FOUND.value())
-                .body("message", is(ErrorMessage.THEME_NOT_FOUND.getMessage()));
+                .body("message", is(ErrorMessage.THEME_NOT_FOUND.format(999)));
     }
 
     @Test

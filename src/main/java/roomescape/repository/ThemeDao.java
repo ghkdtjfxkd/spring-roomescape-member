@@ -67,7 +67,7 @@ public class ThemeDao {
         int affected = jdbcTemplate.update(sql, ThemeStatus.DELETED.name(), themeId);
 
         if(affected == 0) {
-            throw new NotFoundException(ErrorMessage.THEME_NOT_FOUND);
+            throw new NotFoundException(ErrorMessage.THEME_NOT_FOUND.format(themeId));
         }
     }
 

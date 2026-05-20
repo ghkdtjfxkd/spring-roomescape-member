@@ -30,7 +30,7 @@ public class ReservationTimeCommandService {
     @Transactional
     public void delete(long reservationTimeId) {
         ReservationTime time = reservationTimeDao.findByTimeId(reservationTimeId)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.TIME_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.TIME_NOT_FOUND.format(reservationTimeId)));
 
         if (time.isDeleted()) {
             throw new BadRequestException(ErrorMessage.TIME_ALREADY_DELETED);

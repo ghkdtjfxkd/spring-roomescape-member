@@ -106,7 +106,7 @@ public class ReservationDao {
         try {
             return jdbcTemplate.queryForObject(sql, rowMapper, reservationId);
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException(ErrorMessage.RESERVATION_NOT_FOUND);
+            throw new NotFoundException(ErrorMessage.RESERVATION_NOT_FOUND.format(reservationId));
         }
     }
 
@@ -121,7 +121,7 @@ public class ReservationDao {
         int affected = jdbcTemplate.update(sql, reservationId);
 
         if (affected == 0) {
-            throw new NotFoundException(ErrorMessage.RESERVATION_NOT_FOUND);
+            throw new NotFoundException(ErrorMessage.RESERVATION_NOT_FOUND.format(reservationId));
         }
     }
 

@@ -69,7 +69,7 @@ public class ReservationTimeAcceptanceTest extends AcceptanceTestSupport{
                 .when().delete("/admin/times/999")
                 .then().log().all()
                 .statusCode(HttpStatus.NOT_FOUND.value())
-                .body("message", is(ErrorMessage.TIME_NOT_FOUND.getMessage()));
+                .body("message", is(ErrorMessage.TIME_NOT_FOUND.format(999)));
     }
 
     @Test

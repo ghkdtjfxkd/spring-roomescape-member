@@ -50,7 +50,7 @@ public class ReservationTimeDao {
         int affected = jdbcTemplate.update(sql, TimeStatus.DELETED.name(), timeId);
 
         if (affected == 0) {
-            throw new NotFoundException(ErrorMessage.TIME_NOT_FOUND);
+            throw new NotFoundException(ErrorMessage.TIME_NOT_FOUND.format(timeId));
         }
     }
 
