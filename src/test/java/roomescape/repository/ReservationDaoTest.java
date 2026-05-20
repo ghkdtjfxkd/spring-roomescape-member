@@ -5,7 +5,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,15 +28,11 @@ class ReservationDaoTest {
     @Autowired
     private ReservationDao reservationDao;
 
-    @BeforeEach
-    void setUp() {
-        jdbcTemplate.update("INSERT INTO reservation_time (id, start_at, status) VALUES (1, '10:00', 'AVAILABLE')");
-        jdbcTemplate.update("INSERT INTO theme (id, name, thumbnail_url, description, status) VALUES (1, '공포의 저택', 'url', '설명', 'AVAILABLE')");
-    }
-
     @Test
     @DisplayName("예약 저장 테스트")
     void saveReservation() {
+        jdbcTemplate.update("INSERT INTO reservation_time (id, start_at, status) VALUES (1, '10:00', 'AVAILABLE')");
+        jdbcTemplate.update("INSERT INTO theme (id, name, thumbnail_url, description, status) VALUES (1, '공포의 저택', 'url', '설명', 'AVAILABLE')");
         ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
         Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
         Reservation reservation = Reservation.of(null, "user_a", LocalDate.of(2026, 5, 1), time, theme);
@@ -52,6 +47,8 @@ class ReservationDaoTest {
     @Test
     @DisplayName("예약 삭제 시 DB에서 행이 제거된다")
     void deleteReservation() {
+        jdbcTemplate.update("INSERT INTO reservation_time (id, start_at, status) VALUES (1, '10:00', 'AVAILABLE')");
+        jdbcTemplate.update("INSERT INTO theme (id, name, thumbnail_url, description, status) VALUES (1, '공포의 저택', 'url', '설명', 'AVAILABLE')");
         ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
         Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
         Reservation reservation = Reservation.of(null, "user_a", LocalDate.of(2026, 5, 1), time, theme);
@@ -66,6 +63,8 @@ class ReservationDaoTest {
     @Test
     @DisplayName("동일 날짜·시간·테마 예약이 존재하면 true를 반환한다")
     void existsReturnsTrueWhenDuplicate() {
+        jdbcTemplate.update("INSERT INTO reservation_time (id, start_at, status) VALUES (1, '10:00', 'AVAILABLE')");
+        jdbcTemplate.update("INSERT INTO theme (id, name, thumbnail_url, description, status) VALUES (1, '공포의 저택', 'url', '설명', 'AVAILABLE')");
         ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
         Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
         Reservation reservation = Reservation.of(null, "user_a", LocalDate.of(2026, 5, 1), time, theme);
