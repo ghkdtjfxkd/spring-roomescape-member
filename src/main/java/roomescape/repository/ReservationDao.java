@@ -110,10 +110,10 @@ public class ReservationDao {
         }
     }
 
-    public Reservation update(long reservationId, LocalDate date, long timeId) {
+    public Reservation update(Reservation reservation) {
         String sql = "UPDATE reservation SET date = ?, time_id = ? WHERE id = ?";
-        jdbcTemplate.update(sql, date, timeId, reservationId);
-        return findById(reservationId);
+        jdbcTemplate.update(sql, reservation.reservationDate(), reservation.reservationTime().id(), reservation.id());
+        return findById(reservation.id());
     }
 
     public void delete(long reservationId) {

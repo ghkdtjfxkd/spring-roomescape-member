@@ -28,24 +28,26 @@ public class ReservationCommandService {
     private final ThemeDao themeDao;
 
     @Transactional
-    public ReservationResponse create(String name, LocalDate date, long timeId, long themeId, LocalDateTime requestDateTime) {
+    public ReservationResponse create(String name, LocalDate date, long timeId, long themeId, LocalDateTime requestedAt) {
         ReservationTime time = getReservationTime(timeId);
         Theme theme = getTheme(themeId);
 
-        validatePastDateTime(requestDateTime, date, time);
+        Reservation reservation = Reservation.pending(name, date, time, theme, requestedAt);
         validateNoDuplicateReservation(date, timeId, themeId);
-        Reservation savedReservation = reservationDao.save(Reservation.pending(name, date, time, theme));
+        Reservation savedReservation = reservationDao.save(reservation);
+
         return ReservationResponse.from(savedReservation);
     }
 
     @Transactional
-    public ReservationResponse update(long reservationId, LocalDate date, long timeId, LocalDateTime requestDateTime) {
+    public ReservationResponse update(Long reservationId, LocalDate date, Long timeId, LocalDateTime requestedAt) {
         ReservationTime time = getReservationTime(timeId);
         Reservation existing = reservationDao.findById(reservationId);
 
-        validatePastDateTime(requestDateTime, date, time);
         validateNoDuplicateReservation(date, timeId, existing.reservationTheme().id());
-        return ReservationResponse.from(reservationDao.update(reservationId, date, timeId));
+        Reservation rescheduled = Reservation.reschedule(reservationId, existing.username(), date, time, existing.reservationTheme(), requestedAt);
+
+        return ReservationResponse.from(reservationDao.update(rescheduled));
     }
 
     @Transactional
@@ -63,12 +65,6 @@ public class ReservationCommandService {
     private Theme getTheme(long themeId) {
         return themeDao.findAvailableByThemeId(themeId)
                 .orElseThrow(() -> new BadRequestException(ErrorMessage.THEME_NOT_FOUND));
-    }
-
-    private void validatePastDateTime(LocalDateTime requestDateTime, LocalDate date, ReservationTime reservationTime) {
-        if (reservationTime.isPast(date, requestDateTime)) {
-            throw new BadRequestException(ErrorMessage.CANNOT_SELECT_PAST_DATETIME);
-        }
     }
 
     private void validateNoDuplicateReservation(LocalDate date, long timeId, long themeId) {

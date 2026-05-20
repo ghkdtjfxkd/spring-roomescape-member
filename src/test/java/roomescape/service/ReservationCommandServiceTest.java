@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import roomescape.domain.exception.DomainException;
 import roomescape.exception.ErrorMessage;
-import roomescape.exception.custom.BadRequestException;
 import roomescape.exception.custom.ConflictException;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -45,7 +45,7 @@ class ReservationCommandServiceTest {
         LocalDateTime requestDateTime = LocalDateTime.of(date, LocalTime.MAX);
 
         assertThatThrownBy(() -> reservationCommandService.create("user_a", date, timeId, themeId, requestDateTime))
-                .isExactlyInstanceOf(BadRequestException.class)
+                .isExactlyInstanceOf(DomainException.class)
                 .hasMessage(ErrorMessage.CANNOT_SELECT_PAST_DATETIME.getMessage());
     }
 

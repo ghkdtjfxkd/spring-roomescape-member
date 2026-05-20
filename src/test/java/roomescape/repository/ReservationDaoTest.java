@@ -41,7 +41,7 @@ class ReservationDaoTest {
     void saveReservation() {
         ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
         Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
-        Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1), time, theme);
+        Reservation reservation = Reservation.of(null, "user_a", LocalDate.of(2026, 5, 1), time, theme);
         Reservation saved = reservationDao.save(reservation);
 
         assertThat(saved.username()).isEqualTo("user_a");
@@ -55,7 +55,7 @@ class ReservationDaoTest {
     void deleteReservation() {
         ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
         Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
-        Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1), time, theme);
+        Reservation reservation = Reservation.of(null, "user_a", LocalDate.of(2026, 5, 1), time, theme);
         Reservation saved = reservationDao.save(reservation);
 
         reservationDao.delete(saved.id());
@@ -69,7 +69,7 @@ class ReservationDaoTest {
     void existsReturnsTrueWhenDuplicate() {
         ReservationTime time = ReservationTime.of(1L, LocalTime.of(10, 0), TimeStatus.AVAILABLE);
         Theme theme = Theme.of(1L, "공포의 저택", "http://localhost/thumbnail", "설명", ThemeStatus.AVAILABLE);
-        Reservation reservation = Reservation.pending("user_a", LocalDate.of(2026, 5, 1), time, theme);
+        Reservation reservation = Reservation.of(null, "user_a", LocalDate.of(2026, 5, 1), time, theme);
         reservationDao.save(reservation);
 
         boolean exists = reservationDao.existsByDateAndTimeIdAndThemeId(LocalDate.of(2026, 5, 1), 1L, 1L);
