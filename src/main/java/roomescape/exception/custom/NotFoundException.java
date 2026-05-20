@@ -1,11 +1,10 @@
 package roomescape.exception.custom;
 
-import org.springframework.http.HttpStatus;
 import roomescape.exception.ErrorMessage;
 
-public class NotFoundException extends RoomescapeException {
+public class NotFoundException extends RuntimeException {
 
     public NotFoundException(ErrorMessage errorMessage) {
-        super(errorMessage.getMessage(), HttpStatus.NOT_FOUND);
+        super(errorMessage.getMessage());
     }
 }

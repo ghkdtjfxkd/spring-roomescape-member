@@ -1,11 +1,10 @@
 package roomescape.exception.custom;
 
-import org.springframework.http.HttpStatus;
 import roomescape.exception.ErrorMessage;
 
-public class BadRequestException extends RoomescapeException {
+public class BadRequestException extends RuntimeException {
 
     public BadRequestException(ErrorMessage errorMessage) {
-        super(errorMessage.getMessage(), HttpStatus.BAD_REQUEST);
+        super(errorMessage.getMessage());
     }
 }
